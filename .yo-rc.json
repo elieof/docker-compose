@@ -1,0 +1,11 @@
+{
+  "generator-jhipster": {
+    "appsFolders": ["eo2-gateway", "eo2-uaa", "quotes"],
+    "directoryPath": "../",
+    "gatewayType": "zuul",
+    "monitoring": "elk",
+    "consoleOptions": ["curator", "zipkin"],
+    "serviceDiscoveryType": "eureka",
+    "jwtSecretKey": "MTQ1MmY2ZjNjMGM4NjAyNGU4NmE1NzA1YjNiMWYyNTdmNjIwOTE1YjViZjkxNDZiNjIxMWUzMzBjYzdmYjQ2NmJjN2Q4NDM4OGUyZmI4NTdkNWUxMDdjYzNmNjE5OWJkODIxMQ=="
+  }
+}

@@ -1,0 +1,124 @@
+version: '2'
+services:
+  eo2gateway:
+    image: eo2gateway
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - 'SPRING_PROFILES_ACTIVE=prod,zipkin,swagger'
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - 'EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka'
+      - 'SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config'
+      - 'SPRING_DATASOURCE_URL=jdbc:mysql://eo2uaa-mysql:3306/eo2gateway?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true'
+      - JHIPSTER_SLEEP=30
+      - 'SPRING_DATA_JEST_URI=http://jhipster-elasticsearch:9200'
+      - 'SPRING_ELASTICSEARCH_REST_URIS=http://jhipster-elasticsearch:9200'
+      - 'KAFKA_BOOTSTRAPSERVERS=kafka:9092'
+      - JHIPSTER_REGISTRY_PASSWORD=eo2-jhr-admin
+    ports:
+      - '8080:8080'
+#  eo2gateway-mysql:
+#    image: 'mysql:8.0.19'
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+#      - MYSQL_DATABASE=eo2gateway
+#    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+#  eo2gateway-elasticsearch:
+#    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.8.6'
+#    environment:
+#      - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
+#      - discovery.type=single-node
+
+  eo2uaa:
+    image: eo2uaa
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - 'SPRING_PROFILES_ACTIVE=prod,zipkin,swagger'
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - 'EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka'
+      - 'SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config'
+      - 'SPRING_DATASOURCE_URL=jdbc:mysql://eo2uaa-mysql:3306/eo2uaa?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true'
+      - JHIPSTER_SLEEP=30
+      - 'SPRING_DATA_JEST_URI=http://jhipster-elasticsearch:9200'
+      - 'SPRING_ELASTICSEARCH_REST_URIS=http://jhipster-elasticsearch:9200'
+      - 'KAFKA_BOOTSTRAPSERVERS=kafka:9092'
+      - JHIPSTER_REGISTRY_PASSWORD=eo2-jhr-admin
+    ports:
+      - '9999:9999'
+  eo2uaa-mysql:
+    image: 'mysql:8.0.19'
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=eo2uaa
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+#  eo2uaa-elasticsearch:
+#    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.8.6'
+#    environment:
+#      - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
+#      - discovery.type=single-node
+
+  quotes:
+    image: quotes
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - 'SPRING_PROFILES_ACTIVE=prod,swagger'
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - 'EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka'
+      - 'SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config'
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://quotes-postgresql:5432/quotes'
+      - JHIPSTER_SLEEP=30
+      - JHIPSTER_REGISTRY_PASSWORD=eo2-jhr-admin
+  quotes-postgresql:
+    image: 'postgres:12.1'
+    environment:
+      - POSTGRES_USER=quotes
+      - POSTGRES_PASSWORD=
+
+  zookeeper:
+    extends:
+      file: kafka.yml
+      service: zookeeper
+  kafka:
+    extends:
+      file: kafka.yml
+      service: kafka
+  jhipster-registry:
+    extends:
+      file: jhipster-registry.yml
+      service: jhipster-registry
+
+  jhipster-elasticsearch:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-elasticsearch
+  jhipster-logstash:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-logstash
+    depends_on:
+      - jhipster-elasticsearch
+  jhipster-console:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-console
+    depends_on:
+      - jhipster-elasticsearch
+  jhipster-import-dashboards:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-import-dashboards
+    depends_on:
+      - jhipster-elasticsearch
+  jhipster-curator:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-curator
+    depends_on:
+      - jhipster-elasticsearch
+  jhipster-zipkin:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-zipkin
+    depends_on:
+      - jhipster-elasticsearch
