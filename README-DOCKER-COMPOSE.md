@@ -18,6 +18,8 @@ Launch all your infrastructure by running: `docker-compose up -d`.
 - eo2Uaa (uaa application)
 - eo2Uaa's mysql database
 - eo2Uaa's elasticsearch search engine
+- eooQuiz (microservice application)
+- eooQuiz's mongodb database
 - quotes (microservice application)
 - quotes's postgresql database
 
